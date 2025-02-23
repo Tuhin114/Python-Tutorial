@@ -2,6 +2,7 @@ import speech_recognition as sr
 import webbrowser
 import pyttsx3
 import musicLibrary
+import requests
 
 # Initialize recognizer and speech engine
 recognizer = sr.Recognizer()
@@ -55,6 +56,18 @@ def processCommand(command):
         link = musicLibrary.music[song]
         speak(f"Playing {song} on YouTube...")
         webbrowser.open(link)
+    elif "news" in command.lower():
+        r = requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey=461d1ef454ad4675a25279810fdcfad4")
+        if r.status_code == 200:
+            # Parse the JSON response
+            data = r.json()
+            
+            # Extract the articles
+            articles = data.get('articles', [])
+            
+            # Print the headlines
+            for article in articles:
+                speak(article['title'])
     else:
         speak("Sorry, I didn't understand the command.")
 
